@@ -1,13 +1,18 @@
 import {
+  isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
+import MainNavigation from "./components/MainNavigation";
 
 import "./tailwind.css";
+import NewNote from "~/components/NewNote";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -32,6 +37,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <header>
+          <MainNavigation />
+        </header>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,4 +50,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export function ErrorBoundary() {
+
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <main>
+      <h1>Page not found!</h1>
+      <p>Back to <Link to="/">safety</Link></p>
+    </main>
+    );
+  }
+
+  return (
+    <main>
+      <h1>An unexpected error occurred!</h1>
+      <p>Sorry something went wrong</p>
+      <p>Back to <Link to="/">safety</Link></p>
+    </main>
+  );
 }
